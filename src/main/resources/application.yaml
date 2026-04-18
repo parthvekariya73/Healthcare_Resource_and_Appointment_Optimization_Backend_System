@@ -118,7 +118,7 @@ spring:
 
   # ── Kafka for Event Sourcing (appointment lifecycle) ──
   kafka:
-    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_SERVERS}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -136,6 +136,16 @@ spring:
         spring.json.trusted.packages: "com.healthcare.*"
       max-poll-records: 100
       fetch-min-size: 1024
+
+Kafka:
+  enabled: true
+  topics:
+    login-events: login-events
+    audit-events: audit-events
+    session-events: session-events
+    notification-events: notification-events
+    error-log-events: error-log-events
+    deal-history-events: deal-history-events
 
 server:
   port: 8080
