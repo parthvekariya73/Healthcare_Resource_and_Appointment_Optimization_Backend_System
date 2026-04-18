@@ -17,12 +17,187 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+// ── Version catalog  (single place to bump versions) ─────────────────────────
+// Boot 4.x ships with: Hibernate 7.x, Spring Framework 7, Spring Security 7
+ext {
+	set('springModulithVersion',  '2.0.3')
+
+	// JWT
+	set('jjwtVersion',            '0.12.6')
+
+	// Mapping
+	set('mapstructVersion',       '1.6.3')
+	set('modelmapperVersion',     '3.2.0')
+
+	// Lombok
+	set('lombokVersion',          '1.18.44')
+	set('lombokMapstructBinding', '0.2.0')
+
+	// API Docs — 2.8+ supports Spring Boot 4.x
+	set('springdocVersion',       '2.8.6')
+
+	// Hypersistence — Boot 4 ships Hibernate 7, use the hibernate-70 artifact
+	// set('hypersistenceVersion',   '3.16.0')
+
+	// Cache
+	set('caffeineVersion',        '3.2.0')
+
+	// Redis
+	set('jedisVersion',           '5.2.0')
+
+	// Excel
+	set('poiVersion',             '5.3.0')
+
+	// AWS
+	set('awsSdkVersion',          '1.12.778')
+
+	// Velocity (email templates)
+	set('velocityVersion',        '2.4')
+
+	// Observability — matches Micrometer 1.16 shipped with Boot 4
+	set('prometheusVersion',      '1.16.0')
 }
 
+// ── Annotation-processor wiring ───────────────────────────────────────────────
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dependencies
+// ─────────────────────────────────────────────────────────────────────────────
+dependencies {
+
+	// ── Spring Boot core starters ─────────────────────────────────────────────
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	implementation 'org.springframework.boot:spring-boot-starter-kafka'
+
+	// ── Security + JWT ────────────────────────────────────────────────────────
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+	runtimeOnly   "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+	runtimeOnly   "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
+
+	// ── Database ──────────────────────────────────────────────────────────────
+	implementation 'org.postgresql:postgresql'
+	implementation 'org.liquibase:liquibase-core'
+
+	// Boot 4 ships Hibernate 7 — use the hibernate-70 artifact (not hibernate-63)
+	// implementation "io.hypersistence:hypersistence-utils-hibernate-71:${hypersistenceVersion}"
+	// implementation "io.hypersistence:hypersistence-utils-hibernate-70:${hypersistenceVersion}"
+	// implementation "io.hypersistence:hypersistence-utils-hibernate-63:3.8.2"
+
+	// ── Caching — Caffeine ────────────────────────────────────────────────────
+	implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+
+	// ── Redis ─────────────────────────────────────────────────────────────────
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation "redis.clients:jedis:${jedisVersion}"
+
+	// ── Modulith ──────────────────────────────────────────────────────────────
+    // implementation 'org.springframework.modulith:spring-modulith-starter-core'
+
+	// ── Observability / Prometheus ────────────────────────────────────────────
+	runtimeOnly "io.micrometer:micrometer-registry-prometheus:${prometheusVersion}"
+
+	// ── Jackson ───────────────────────────────────────────────────────────────
+	// jackson-databind pulled in by spring-boot-starter-web automatically
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	// ── Mapping ───────────────────────────────────────────────────────────────
+	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+	implementation "org.modelmapper:modelmapper:${modelmapperVersion}"
+
+	// ── API Documentation ─────────────────────────────────────────────────────
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
+
+	// ── Apache POI (Excel) ────────────────────────────────────────────────────
+	implementation "org.apache.poi:poi:${poiVersion}"
+	implementation "org.apache.poi:poi-ooxml:${poiVersion}"
+
+	// ── AWS S3 ────────────────────────────────────────────────────────────────
+	implementation "com.amazonaws:aws-java-sdk-s3:${awsSdkVersion}"
+
+	// ── Velocity (email templates) ────────────────────────────────────────────
+	implementation "org.apache.velocity:velocity-engine-core:${velocityVersion}"
+
+	// ── Logging ───────────────────────────────────────────────────────────────
+	// slf4j-api + logback-classic already on classpath via spring-boot-starter-logging
+	implementation 'org.slf4j:slf4j-api'
+
+	// ── Lombok + MapStruct annotation processors ──────────────────────────────
+	compileOnly         "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+	// MUST be declared after lombok + mapstruct to fix processor ordering
+	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBinding}"
+
+	// ── Dev tools ─────────────────────────────────────────────────────────────
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// ── Testing ───────────────────────────────────────────────────────────────
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+	testRuntimeOnly    'org.junit.platform:junit-platform-launcher'
+
+	implementation 'net.coobird:thumbnailator:0.4.20'
+
+}
+
+// ── BOM imports ───────────────────────────────────────────────────────────────
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
+	}
+}
+
+// ── Compiler options ──────────────────────────────────────────────────────────
+tasks.withType(JavaCompile).configureEach {
+	options.encoding     = 'UTF-8'
+	options.compilerArgs += [
+			'-parameters',                           // required for @PathVariable name binding
+			'-Amapstruct.defaultComponentModel=spring',
+			'-Amapstruct.unmappedTargetPolicy=WARN'
+	]
+}
+
+// ── Test configuration ────────────────────────────────────────────────────────
 tasks.named('test') {
 	useJUnitPlatform()
+	jvmArgs '-XX:+EnableDynamicAgentLoading'     // suppresses Java 21 agent warning
+	maxHeapSize = '1g'
+	testLogging {
+		events 'passed', 'skipped', 'failed'
+		exceptionFormat 'full'
+	}
 }
+
+// ── Jar manifest ─────────────────────────────────────────────────────────────
+jar {
+	manifest {
+		attributes(
+				'Implementation-Title':   project.name,
+				'Implementation-Version': project.version,
+				'Built-By':               'parth vekariya',
+				'Build-Jdk':              JavaVersion.current()
+		)
+	}
+}
+
+// ── Reproducible builds ───────────────────────────────────────────────────────
+tasks.withType(AbstractArchiveTask).configureEach {
+	preserveFileTimestamps = false
+	reproducibleFileOrder  = true
+}
+
