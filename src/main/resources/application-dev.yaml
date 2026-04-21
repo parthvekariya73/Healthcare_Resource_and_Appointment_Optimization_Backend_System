@@ -1,0 +1,140 @@
+# ─────────────────────────────────────────────
+# application-dev.yml  —  local / development
+# ─────────────────────────────────────────────
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      exclude: static/**,public/**
+    livereload:
+      enabled: true
+
+  datasource:
+    url: jdbc:postgresql://${DEV_DB_HOST:165.232.176.176}:${DEV_DB_PORT:5444}/${DEV_DB_NAME:e_com_admin}
+    username: ${DEV_DB_USERNAME:topia_admin}
+    password: ${DEV_DB_PASSWORD:T@p$aPI#@alldb50}    # MUST come from env
+    hikari:
+      maximum-pool-size: 10          # Increased from 5 (healthcare needs more)
+      leak-detection-threshold: 3000 # Catch leaks faster
+      minimum-idle: 2
+
+      # ⭐ NEW: H2 for integration testing (optional)
+      # Uncomment for unit tests:
+      # datasource:
+      #   url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+      #   driver-class-name: org.h2.Driver
+
+  jpa:
+    show-sql: true                    # OK in dev
+    hibernate:
+      ddl-auto: validate              # ✅ Keep validate, not update
+    properties:
+      hibernate:
+        generate_statistics: true
+        jdbc.batch_size: 50           # Smaller batch for dev
+        format_sql: true
+        use_sql_comments: true
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 300000            # 5 min in dev
+
+  data:
+    redis:
+      host: ${DEV_REDIS_HOST:localhost}
+      port: ${DEV_REDIS_PORT:6379}
+      password:
+
+  kafka:
+    bootstrap-servers: ${DEV_KAFKA_SERVERS:localhost:9092}
+    consumer:
+      auto-offset-reset: earliest
+
+server:
+  port: 8081                          # Different from prod default
+  error:
+    include-message: always
+    include-stacktrace: always
+    include-binding-errors: always
+  tomcat:
+    accesslog:
+      enabled: true
+      pattern: '%h %l %u %t "%r" %s %b'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"                  # Dev only - all endpoints
+  endpoint:
+    health:
+      show-details: always
+    loggers:
+      enabled: true
+    metrics:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.healthcare: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.data.redis: DEBUG
+    org.apache.kafka: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Generator REST endpoints are ONLY available in dev profile.
+generator:
+  # Where generated Java files are written.
+  # Relative to project root (where you run the app from).
+  output-root: src/main/java
+
+  # Directory containing module JSON config files.
+  # Files must be named {module_name}.json
+  config-dir: src/main/resources/generator-configs
+
+
+# ⭐ Dev-specific: Mock external services
+healthcare:
+  external:
+    mock-email: true
+    mock-sms: true
+    mock-fhir: true
+
+# JWT - Dev key (different from prod)
+app:
+  jwt:
+    secret: ${DEV_JWT_SECRET:Q3Y1bW9wN213eHpxMnRmdTZhYjM0cnk4OTAwM25iMGQxcGxlNmF1cjRrZXk4NzY1NDMyMTEwYmFzZTY0c2VjcmV0MjAyNQ==}
+    expiration-time: ${DEV_JWT_EXPIRATION:604800000}
+
+# Mail Configuration
+mail:
+  host: email-smtp.eu-west-2.amazonaws.com
+  port: 587
+  username: AKIA6QB7T3KA3JZ42VJO
+  password: BP0V2bQAKikSVZ1A3oiBgec9Ybd/jqEN3nD0lka9cFQW
+  from: donotreply@novumgen.uk
+  fromname: RI(Regulatory-Intelligence)
+  smtp:
+    auth: true
+    starttls:
+      enable: true
+    ssl:
+      trust: email-smtp.eu-west-2.amazonaws.com
+
+# File Upload Configuration
+file:
+  upload:
+    max-size: 52428800
+    local-dir: uploads/
+    allowed-types: "*"    # image/jpeg, image/png, application/pdf
+
+# ⚠️ REMOVED hardcoded mail, spaces, audit configs
+# These should NEVER be in YAML files
+# Use Spring Cloud Config + Vault instead

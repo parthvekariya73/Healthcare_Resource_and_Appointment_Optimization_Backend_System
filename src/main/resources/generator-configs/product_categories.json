@@ -1,0 +1,54 @@
+{
+  "moduleName": "product_categories",
+  "packageName": "com.healthcare.catalog.productcategories",
+  "tableName": "product_categories",
+  "schemaName": "catalog",
+  "primaryKey": "product_category_id",
+  "primaryKeyType": "Long",
+  "uuidField": "productCategoryUuid",
+  "softDeleteField": "status",
+  "auditFields": true,
+  "defaultSortField": "createdAt",
+  "defaultSortDirection": "DESC",
+  "defaultPageSize": 10,
+  "enableStatusFilter": true,
+  "enableBulkDelete": false,
+  "enableCount": true,
+  "enableDropdown": true,
+  "enableCache": false,
+  "dropdownLabelField": "name",
+  "fields": [
+    {
+      "name": "parentId", "columnName": "parent_id", "type": "Long",
+      "nullable": true, "searchable": false, "filterable": true, "sortable": false,
+      "includeInDropdown": false, "validations": []
+    },
+    {
+      "name": "name", "columnName": "name", "type": "String",
+      "nullable": false, "length": 120, "searchable": true, "filterable": false,
+      "sortable": true, "includeInDropdown": true,
+      "validations": [
+        { "annotation": "NotBlank", "message": "Name is required" },
+        { "annotation": "Size", "attributes": { "max": 120 }, "message": "Max 120 chars" }
+      ]
+    },
+    {
+      "name": "slug", "columnName": "slug", "type": "String",
+      "nullable": false, "length": 140, "searchable": true, "filterable": false,
+      "sortable": false, "includeInDropdown": false,
+      "validations": [
+        { "annotation": "NotBlank", "message": "Slug is required" },
+        { "annotation": "Size", "attributes": { "max": 140 }, "message": "Max 140 chars" }
+      ]
+    },
+    {
+      "name": "displayOrder", "columnName": "display_order", "type": "Short",
+      "nullable": true, "defaultValue": "0", "searchable": false,
+      "filterable": false, "sortable": true, "includeInDropdown": false, "validations": []
+    }
+  ],
+  "uniqueConstraints": [
+    { "name": "uq_product_categories_slug", "fields": ["slug"], "message": "Slug already exists" }
+  ],
+  "relationships": []
+}

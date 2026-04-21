@@ -1,0 +1,32 @@
+{
+  "moduleName": "txn_monthly_plan_header",
+  "packageName": "com.healthcare.mr.monthlyplan",
+  "tableName": "txn_monthly_plan_header",
+  "schemaName": "mr",
+  "primaryKey": "mr_monthly_plan_id",
+  "primaryKeyType": "Long",
+  "uuidField": "mrMonthlyPlanUuid",
+  "softDeleteField": "status",
+  "auditFields": true,
+  "defaultSortField": "createdAt",
+  "defaultSortDirection": "DESC",
+  "defaultPageSize": 10,
+  "enableStatusFilter": true,
+  "enableCount": true,
+  "enableDropdown": false,
+  "enableCache": false,
+  "fields": [
+    { "name": "mrId",            "columnName": "mr_id",            "type": "Long",          "nullable": false, "filterable": true,  "searchable": false, "sortable": false, "validations": [{ "annotation": "NotNull", "message": "MR ID is required" }] },
+    { "name": "planMonth",       "columnName": "plan_month",       "type": "Short",         "nullable": false, "filterable": true,  "searchable": false, "sortable": true,  "validations": [{ "annotation": "NotNull", "message": "Plan month is required" }, { "annotation": "Min", "attributes": { "value": 1 } }, { "annotation": "Max", "attributes": { "value": 12 } }] },
+    { "name": "planYear",        "columnName": "plan_year",        "type": "Short",         "nullable": false, "filterable": true,  "searchable": false, "sortable": true,  "validations": [{ "annotation": "NotNull", "message": "Plan year is required" }] },
+    { "name": "planStatusId",    "columnName": "plan_status_id",   "type": "Long",          "nullable": false, "filterable": true,  "searchable": false, "sortable": false, "validations": [{ "annotation": "NotNull", "message": "Plan status is required" }] },
+    { "name": "submittedAt",     "columnName": "submitted_at",     "type": "LocalDateTime", "nullable": true,  "filterable": false, "searchable": false, "sortable": false, "validations": [] },
+    { "name": "approvedBy",      "columnName": "approved_by",      "type": "Long",          "nullable": true,  "filterable": false, "searchable": false, "sortable": false, "validations": [] },
+    { "name": "approvedAt",      "columnName": "approved_at",      "type": "LocalDateTime", "nullable": true,  "filterable": false, "searchable": false, "sortable": false, "validations": [] },
+    { "name": "rejectionReason", "columnName": "rejection_reason", "type": "String",        "nullable": true,  "filterable": false, "searchable": false, "sortable": false, "validations": [] }
+  ],
+  "uniqueConstraints": [
+    { "name": "uq_mmp_mr_month_year", "fields": ["mrId", "planMonth", "planYear"], "message": "Monthly plan already exists for this MR and period" }
+  ],
+  "relationships": []
+}
