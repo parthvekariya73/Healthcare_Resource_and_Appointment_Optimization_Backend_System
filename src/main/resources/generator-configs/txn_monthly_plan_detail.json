@@ -1,0 +1,28 @@
+{
+  "moduleName": "txn_monthly_plan_detail",
+  "packageName": "com.healthcare.mr.monthlyplan",
+  "tableName": "txn_monthly_plan_detail",
+  "schemaName": "mr",
+  "primaryKey": "mr_plan_detail_id",
+  "primaryKeyType": "Long",
+  "uuidField": "mrPlanDoctorUuid",
+  "softDeleteField": "status",
+  "auditFields": true,
+  "defaultSortField": "createdAt",
+  "defaultSortDirection": "DESC",
+  "defaultPageSize": 20,
+  "enableStatusFilter": true,
+  "enableCount": true,
+  "enableDropdown": false,
+  "enableCache": false,
+  "fields": [
+    { "name": "mrMonthlyPlanId",   "columnName": "mr_monthly_plan_id",   "type": "Long",      "nullable": false, "filterable": true,  "searchable": false, "sortable": false, "validations": [{ "annotation": "NotNull", "message": "Plan header ID is required" }] },
+    { "name": "entityCode",         "columnName": "entity_code",          "type": "String",    "nullable": false, "length": 50, "filterable": true, "searchable": false, "sortable": false, "validations": [{ "annotation": "NotBlank", "message": "Entity code is required" }] },
+    { "name": "entityUniqueId",     "columnName": "entity_unique_id",     "type": "Long",      "nullable": false, "filterable": false, "searchable": false, "sortable": false, "validations": [{ "annotation": "NotNull", "message": "Entity ID is required" }] },
+    { "name": "plannedVisitDate",   "columnName": "planned_visit_date",   "type": "LocalDate", "nullable": true,  "filterable": false, "searchable": false, "sortable": true,  "validations": [] },
+    { "name": "remark",             "columnName": "remark",               "type": "String",    "nullable": true,  "filterable": false, "searchable": false, "sortable": false, "validations": [] },
+    { "name": "planVisitStatusId",  "columnName": "plan_visit_status_id", "type": "Long",      "nullable": false, "filterable": true,  "searchable": false, "sortable": false, "validations": [{ "annotation": "NotNull", "message": "Visit status is required" }] }
+  ],
+  "uniqueConstraints": [],
+  "relationships": []
+}

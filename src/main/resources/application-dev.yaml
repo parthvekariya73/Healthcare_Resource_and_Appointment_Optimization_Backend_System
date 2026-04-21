@@ -12,9 +12,9 @@ spring:
       enabled: true
 
   datasource:
-    url: jdbc:postgresql://${DEV_DB_HOST}:${DEV_DB_PORT}/${DEV_DB_NAME}
-    username: ${DEV_DB_USERNAME}
-    password: ${DEV_DB_PASSWORD}    # MUST come from env
+    url: jdbc:postgresql://${DEV_DB_HOST:165.232.176.176}:${DEV_DB_PORT:5444}/${DEV_DB_NAME:e_com_admin}
+    username: ${DEV_DB_USERNAME:topia_admin}
+    password: ${DEV_DB_PASSWORD:T@p$aPI#@alldb50}    # MUST come from env
     hikari:
       maximum-pool-size: 10          # Increased from 5 (healthcare needs more)
       leak-detection-threshold: 3000 # Catch leaks faster
@@ -44,12 +44,12 @@ spring:
 
   data:
     redis:
-      host: ${DEV_REDIS_HOST}
-      port: ${DEV_REDIS_PORT}
-      password: ${DEV_REDIS_PASSWORD}
+      host: ${DEV_REDIS_HOST:localhost}
+      port: ${DEV_REDIS_PORT:6379}
+      password:
 
   kafka:
-    bootstrap-servers: ${DEV_KAFKA_SERVERS}
+    bootstrap-servers: ${DEV_KAFKA_SERVERS:localhost:9092}
     consumer:
       auto-offset-reset: earliest
 
@@ -89,6 +89,17 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 
+# Generator REST endpoints are ONLY available in dev profile.
+generator:
+  # Where generated Java files are written.
+  # Relative to project root (where you run the app from).
+  output-root: src/main/java
+
+  # Directory containing module JSON config files.
+  # Files must be named {module_name}.json
+  config-dir: src/main/resources/generator-configs
+
+
 # ⭐ Dev-specific: Mock external services
 healthcare:
   external:
@@ -99,8 +110,8 @@ healthcare:
 # JWT - Dev key (different from prod)
 app:
   jwt:
-    secret: ${DEV_JWT_SECRET}
-    expiration-time: ${DEV_JWT_EXPIRATION}
+    secret: ${DEV_JWT_SECRET:Q3Y1bW9wN213eHpxMnRmdTZhYjM0cnk4OTAwM25iMGQxcGxlNmF1cjRrZXk4NzY1NDMyMTEwYmFzZTY0c2VjcmV0MjAyNQ==}
+    expiration-time: ${DEV_JWT_EXPIRATION:604800000}
 
 # Mail Configuration
 mail:

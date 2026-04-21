@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE}
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   application:
     name: healthcare-resource-optimizer
@@ -148,7 +148,7 @@ Kafka:
     deal-history-events: deal-history-events
 
 server:
-  port: 8080
+  port: 8081
   shutdown: graceful
   compression:
     enabled: true
